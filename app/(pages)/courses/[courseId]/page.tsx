@@ -14,7 +14,7 @@ import Image from 'next/image'
 
 import React from 'react'
 import { PopularCourses } from '../layout'
-import { ExploreEvent } from '@/app/newsfeed/layout'
+import { ExploreEvent } from '@/app/(pages)/newsfeed/layout'
 
 const CourseDetailPage = () => {
     const dummyData = [

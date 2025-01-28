@@ -29,7 +29,7 @@ const PrimaryHeader = () => {
 
             {/* Navigation Section */}
             <div className="px-4 py-2 flex items-center gap-2">
-                <Link href={"/userprofile"} className="flex items-center space-x-2 py-2 cursor-pointer">
+                <Link href={"/profile"} className="flex items-center space-x-2 py-2 cursor-pointer">
                     <div className='flex items-center justify-between gap-2 border rounded-xl hover:bg-gray-200 transition-colors py-1 px-2'>
                         <Avatar className="bg-gray-500/50 w-8 h-8">
                             <AvatarFallback>A</AvatarFallback>
