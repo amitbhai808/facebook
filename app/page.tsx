@@ -15,8 +15,13 @@ import FeatureCard from '@/components/cards/featureCard'
 import Image from 'next/image'
 import Footer from '@/components/shareby/footer'
 import Link from 'next/link'
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
-const HomePage = () => {
+export default async function HomePage() {
+  const session = await auth()
+  if (!session) return redirect('/auth/signIn')
+
 
   const features = [
     {
@@ -63,7 +68,17 @@ const HomePage = () => {
               <Label className="border border-white rounded-xl p-3">Today's NewsFeed</Label>
               <Label>Help</Label>
               <Label>Eng</Label>
-              <Label>Login / Register</Label>
+              {session ? (
+                <div className="flex gap-2 items-center">
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <Label>{session.user?.name}</Label>
+                </div>
+              ) : (
+                <Label>Login / Register</Label>
+              )}
             </div>
           </div>
 
@@ -357,4 +372,3 @@ const HomePage = () => {
   )
 }
 
-export default HomePage

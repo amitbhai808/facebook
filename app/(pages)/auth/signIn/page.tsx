@@ -1,24 +1,51 @@
 // app/auth/signin/page.tsx
 'use client';
 
-import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { LockIcon, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { types } from 'util';
-
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { signInWithCredentials, signInWithOAuth } from '@/lib/auth.actions';
 
 const SignInPage: React.FC = () => {
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        // Add form submission logic here
-        console.log({ username, password });
+    const handleFormSubmit = async (formData: FormData) => {
+        setIsLoading(true);
+        setError(null);
+        
+
+        try {
+            const result = await signInWithCredentials(formData);
+
+            if (result?.error) {
+                setError(result.error);
+            } else {
+                router.push('/');
+                router.refresh();
+            }
+        } catch (error) {
+            setError('An unexpected error occurred');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleOAuth = async (provider: string) => {
+        setIsLoading(true);
+        try {
+            const result = await signInWithOAuth(provider);
+            if (result?.error) setError(result.error);
+        } catch (error) {
+            setError('Failed to initiate OAuth flow');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -42,15 +69,16 @@ const SignInPage: React.FC = () => {
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
                         <h2 className="text-xl font-semibold text-blue-500">Socimo!</h2>
 
-                        <form className="mt-6 w-full" onSubmit={handleSubmit}>
+                        <form className="mt-6 w-full" action={handleFormSubmit}>
                             <div className="mb-4">
                                 <Label className="block text-sm font-medium text-gray-700">
-                                    Username
+                                    Email
                                 </Label>
                                 <Input
+                                    name="email"
                                     type="text"
-                                    value={username}
-                                    onChange={(event) => setUsername(event.target.value)}
+                                    // value={username}
+                                    // onChange={(event) => setUsername(event.target.value)}
                                     placeholder="User Name @"
                                     className="mt-2 w-full"
                                 />
@@ -61,9 +89,10 @@ const SignInPage: React.FC = () => {
                                     Password
                                 </Label>
                                 <Input
+                                    name="password"
                                     type="password"
-                                    value={password}
-                                    onChange={(event) => setPassword(event.target.value)}
+                                    // value={password}
+                                    // onChange={(event) => setPassword(event.target.value)}
                                     placeholder="Password"
                                     className="mt-2 w-full"
                                 />
